@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script src="http://d3js.org/d3.v3.js"></script>
+  <!-- <script>
+  d3.csv("stop_ids.csv", function(error, data) {
+    var select = d3.select("body")
+      .append("div")
+      .append("select")
+
+    select
+      .on("change", function(d) {
+        var value = d3.select(this).property("value");
+        alert(value);
+      });
+
+    select.selectAll("option")
+      .data(data)
+      .enter()
+        .append("option")
+        .attr("value", function (d) { return d.stop_name; })
+        .text(function (d) { return d.stop_name; });
+  });
+  </script> -->
+    <form  method="POST">
+      <select name="stops">
+        {% for stop_name in stop_names|sort %}
+        <option value="{{stop_name}}">{{stop_name}}</option>
+        {% endfor %}
+      </select>
+      <select name="direction">
+        <option value="None">Select Direction</option>
+        <option value="N">N</option>
+        <option value="S">S</option>
+      </select>
+      <input type="submit" name="button">
+    </form>
+    <p>{{ request.form['stop_name'] }}</p>
+    {% set update = update %}
+    {% for line in update %}
+    <p>{{ line }}</p>
+    {% endfor %}
+  </body>
+</html>
