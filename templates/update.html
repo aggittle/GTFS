@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/mta_style.css') }}">
   </head>
   <body>
     <script src="http://d3js.org/d3.v3.js"></script>
@@ -39,10 +40,81 @@
       </select>
       <input type="submit" name="button">
     </form>
-    <p>{{ request.form['stop_name'] }}</p>
     {% set update = update %}
+    {% set stop = stop %}
+    {% set direction = direction %}
+    {% if stop != 'None' %}
+      <h1 style="font-family:Helvetica, sans-serif">{{ stop }}   {{ direction }}</h1>
+      <!-- <h2>{{ direction }}</h2> -->
+    {% endif %}
     {% for line in update %}
-    <p>{{ line }}</p>
+      {% if line == "A" %}
+      <span class="mta-ace mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "C" %}
+      <span class="mta-ace mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "E" %}
+      <span class="mta-ace mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "B" %}
+      <span class="mta-bdfm mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "D" %}
+      <span class="mta-bdfm mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "F" %}
+      <span class="mta-bdfm mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "M" %}
+      <span class="mta-bdfm mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "G" %}
+      <span class="mta-g mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "J" %}
+      <span class="mta-jz mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "Z" %}
+      <span class="mta-jz mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "L" %}
+      <span class="mta-l mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "N" %}
+      <span class="mta-nqr mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "Q" %}
+      <span class="mta-nqr mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "R" %}
+      <span class="mta-nqr mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "S" %}
+      <span class="mta-s mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "1" %}
+      <span class="mta-123 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "2" %}
+      <span class="mta-123 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "3" %}
+      <span class="mta-123 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "4" %}
+      <span class="mta-456 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "5" %}
+      <span class="mta-456 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "6" %}
+      <span class="mta-456 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% elif line == "7" %}
+      <span class="mta-7 mta-bullet">{{ line }}</span>
+      <p class="mta">{{ update[line] }}</p>
+      {% endif %}
     {% endfor %}
   </body>
 </html>

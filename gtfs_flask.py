@@ -19,7 +19,9 @@ def getupdate():
         direction = request.form.get('direction')
     return render_template('update.html',
                            update=get_time(stop, direction),
-                           stop_names = stop_names)
+                           stop_names = stop_names,
+                           stop = stop,
+                           direction = direction)
 
 if __name__ == "__main__":
     app.run(debug=True)

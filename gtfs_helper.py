@@ -6,7 +6,7 @@ import time
 import json
 import pandas as pd
 import datetime
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import numpy as np
 from functools import reduce
 
@@ -61,10 +61,12 @@ def get_time(stop, direction):
         df = pd.DataFrame(collector)
 
     # print out timetables for given stop_id
-    print_list = []
+    #print_list = []
+    print_dict = defaultdict(list)
     for i, row in df.iterrows():
         for  j in row[3:]:
             if type(j) == tuple:
                 if j[0] in stop_id and j[0].endswith(direction):
-                    print_list.append((row.routeId + ' arriving in ' + str(j[1]) + ' minutes', row.tripId))
-    return print_list
+                    print_dict[str(row.routeId)].append(str(j[1]) + ' minutes')
+                    #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
+    return print_dict
