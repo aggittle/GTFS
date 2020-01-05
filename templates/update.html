@@ -3,48 +3,46 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <!-- Latest compiled and minified CSS -->
+
+
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/mta_style.css') }}">
   </head>
   <body>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="http://d3js.org/d3.v3.js"></script>
-  <!-- <script>
-  d3.csv("stop_ids.csv", function(error, data) {
-    var select = d3.select("body")
-      .append("div")
-      .append("select")
-
-    select
-      .on("change", function(d) {
-        var value = d3.select(this).property("value");
-        alert(value);
-      });
-
-    select.selectAll("option")
-      .data(data)
-      .enter()
-        .append("option")
-        .attr("value", function (d) { return d.stop_name; })
-        .text(function (d) { return d.stop_name; });
-  });
-  </script> -->
-    <form  method="POST">
-      <select name="stops">
+    <script src="static/js/app.js"></script>
+    <form  method="POST" action="/">
+      <select name="stops" id="stops">
+        <option value="" disabled selected>Stop</option>
         {% for stop_name in stop_names|sort %}
         <option value="{{stop_name}}">{{stop_name}}</option>
         {% endfor %}
       </select>
-      <select name="direction">
+      <select name="direction" id="direction">
+        <option value="" disabled selected>Direction</option>
         <option value="N">N</option>
         <option value="S">S</option>
       </select>
-      <input type="submit" name="button">
+      <button type="submit" name="button">Get Clock</button>
     </form>
-    {% set update = update %}
-    {% set stop = stop %}
-    {% set direction = direction %}
+    <div id="updt">
+    </div>
+    <!-- {% if update %}
+      {% set update = update %}
+    {% endif %}
+    {% if stop %}
+      {% set stop = stop %}
+    {% endif %}
+    {% if direction %}
+      {% set direction = direction %}
+    {% endif %}
     {% if stop != 'None' %}
       <h1 style="font-family:Helvetica, sans-serif">{{ stop }}   {{ direction }}</h1>
-      <!-- <h2>{{ direction }}</h2> -->
     {% endif %}
     {% for line in update %}
       {% if line == "A" %}
@@ -114,6 +112,6 @@
       <span class="mta-7 mta-bullet">{{ line }}</span>
       <p class="mta">{{ update[line] }}</p>
       {% endif %}
-    {% endfor %}
+    {% endfor %} -->
   </body>
 </html>

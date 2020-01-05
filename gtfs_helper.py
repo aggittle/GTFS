@@ -33,41 +33,40 @@ def get_feed(url):
         return []
 
 def get_time(stop, direction):
-    while True:
-        #get feed
-        feeds = [get_feed(url) for url in urls]
-        dict_obj = reduce(lambda a,b: a+b, feeds)
-        collector = []
-        #turn stop into stop id
+    #get feed
+    feeds = [get_feed(url) for url in urls]
+    dict_obj = reduce(lambda a,b: a+b, feeds)
+    collector = []
+    #turn stop into stop id
 
-        stop_id = stop_ids.loc[(stop_ids['stop_name']==stop), 'stop_id'].tolist()
+    stop_id = stop_ids.loc[(stop_ids['stop_name']==stop), 'stop_id'].tolist()
 
 
-        # turn feed dict object into DataFrame
-        for block in dict_obj:
+    # turn feed dict object into DataFrame
+    for block in dict_obj:
 
-            row = OrderedDict()
-            try:
-                row['id'] = block['id']
-                row['tripId'] = block['tripUpdate']['trip'].get('tripId','')
-                row['routeId'] = block['tripUpdate']['trip'].get('routeId','')
-                for i, stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
-                    minutes = round((int(stop['arrival'].get('time','')) - int(time.time()))/60)
-                    row[i] = (stop['stopId'], minutes)
+        row = OrderedDict()
+        try:
+            row['id'] = block['id']
+            row['tripId'] = block['tripUpdate']['trip'].get('tripId','')
+            row['routeId'] = block['tripUpdate']['trip'].get('routeId','')
+            for i, stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
+                minutes = round((int(stop['arrival'].get('time','')) - int(time.time()))/60)
+                row[i] = (stop['stopId'], minutes)
 
-                collector.append(row)
-            except:
-                pass
+            collector.append(row)
+        except:
+            pass
 
-            df = pd.DataFrame(collector)
+        df = pd.DataFrame(collector)
 
-        # print out timetables for given stop_id
-        #print_list = []
-        print_dict = defaultdict(list)
-        for i, row in df.iterrows():
-            for  j in row[3:]:
-                if type(j) == tuple:
-                    if j[0] in stop_id and j[0].endswith(direction):
-                        print_dict[str(row.routeId)].append(str(j[1]) + ' minutes')
-                        #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
-        return print_dict
+    # print out timetables for given stop_id
+    #print_list = []
+    print_dict = defaultdict(list)
+    for i, row in df.iterrows():
+        for  j in row[3:]:
+            if type(j) == tuple:
+                if j[0] in stop_id and j[0].endswith(direction):
+                    print_dict[str(row.routeId)].append(str(j[1]) + ' minutes')
+                    #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
+    return print_dict

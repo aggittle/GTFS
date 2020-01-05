@@ -46,3 +46,6 @@ span.mta-bullet { display: inline-block; }
   font-family: Helvetica, sans-serif;
   font-weight: bold;
 }
+.mta {
+	font-family: Helvetica, sans-serif;
+}
