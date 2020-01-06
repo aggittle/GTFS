@@ -67,6 +67,8 @@ def get_time(stop, direction):
         for  j in row[3:]:
             if type(j) == tuple:
                 if j[0] in stop_id and j[0].endswith(direction):
-                    print_dict[str(row.routeId)].append(str(j[1]) + ' minutes')
+                    print_dict[str(row.routeId)].append(j[1])
+    for key, value in print_dict.items():
+        print_dict[key] = [str(x) + '  minutes' for x in sorted(value)]
                     #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
     return print_dict
