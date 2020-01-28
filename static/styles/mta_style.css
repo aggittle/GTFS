@@ -1,11 +1,11 @@
 html {
-	font-size: 32px;
+	font-size: 2vw;
 }
 
 
 .mta-bullet {
 	font-family: Helvetica, sans-serif;
-	font-size: 32px;
+	font-size: 3.2vw;
 	width:  1em;
 	height: 1em;
 	font-size: 1em;
@@ -53,5 +53,5 @@ span.mta-bullet { display: inline-block; }
 }
 .mta {
 	font-family: Helvetica, sans-serif;
-		font-size: 24px;
+		font-size: 3.1vw;
 }
