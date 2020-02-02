@@ -5,8 +5,9 @@
     <title></title>
     <!-- Latest compiled and minified CSS -->
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href=../static/styles/mta_style.css>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/mta_style.css') }}">
   </head>
   <body>
     <!-- jQuery library -->
@@ -17,18 +18,20 @@
     <script src="http://d3js.org/d3.v3.js"></script>
     <script src="static/js/app.js"></script>
     <form  method="POST" action="/">
-      <select name="stops" id="stops">
-        <option value="" disabled selected>Stop</option>
-        {% for stop_name in stop_names|sort %}
-        <option value="{{stop_name}}">{{stop_name}}</option>
-        {% endfor %}
-      </select>
-      <select name="direction" id="direction">
-        <option value="" disabled selected>Direction</option>
-        <option value="N">N</option>
-        <option value="S">S</option>
-      </select>
-      <button type="submit" name="button">Get Clock</button>
+      <div>  
+        <select name="stops" id="stops" class=" form-control-inline form-control-lg">
+          <option value="" disabled selected hidden>Stop</option>
+          {% for stop_name in stop_names|sort %}
+          <option value="{{stop_name}}">{{stop_name}}</option>
+          {% endfor %}
+        </select>
+        <select name="direction" id="direction" class="form-control-inline form-control-lg">
+          <option value="" disabled selected hidden>Direction</option>
+          <option value="N">N</option>
+          <option value="S">S</option>
+        </select>
+      </div>
+      <button type="submit" name="button" class="btn btn-primary btn-md">Get Clock</button>
     </form>
     <div id="updt">
     </div>

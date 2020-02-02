@@ -18,11 +18,11 @@ direction = ''
 
 def generate_update():
     while not thread_stop_event.isSet():
-            global stop
-            global direction
-            update=get_time(stop, direction)
-            socketio.emit('trip_updates', {'update': update}, namespace='/test')
-            socketio.sleep(1)
+        global stop
+        global direction
+        update=get_time(stop, direction)
+        socketio.emit('trip_updates', {'update': update}, namespace='/test')
+        socketio.sleep(1)
     else:
         print("No request received")
 

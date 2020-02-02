@@ -1,6 +1,5 @@
 from google.transit import gtfs_realtime_pb2
 from google.protobuf.json_format import MessageToDict, MessageToJson
-import urllib3
 import requests
 import time
 import json
@@ -22,15 +21,17 @@ urls = ['http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81
 ]
 
 def get_feed(url):
-    http = urllib3.PoolManager()
-    feed = gtfs_realtime_pb2.FeedMessage()
-    response = requests.get(url)
-    feed.ParseFromString(response.content)
-    dict_obj = MessageToDict(feed)
-    if dict_obj != {}:
-        return dict_obj['entity']
-    else:
-        return []
+    try:
+        feed = gtfs_realtime_pb2.FeedMessage()
+        response = requests.get(url)
+        feed.ParseFromString(response.content)
+        dict_obj = MessageToDict(feed)
+        if dict_obj != {}:
+            return dict_obj['entity']
+        else:
+            return []
+    except:
+        pass
 
 def get_time(stop, direction):
     #get feed
@@ -69,6 +70,6 @@ def get_time(stop, direction):
                 if j[0] in stop_id and j[0].endswith(direction):
                     print_dict[str(row.routeId)].append(j[1])
     for key, value in print_dict.items():
-        print_dict[key] = [str(x) + '  minutes' for x in sorted(value)]
+        print_dict[key] = [str(x) for x in sorted(value)]
                     #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
     return print_dict

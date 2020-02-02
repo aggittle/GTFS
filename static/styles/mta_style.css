@@ -1,11 +1,27 @@
-html {
-	font-size: 2vw;
+* {
+    box-sizing: content-box;
 }
 
+/* form  {
+	text-align: center;
+} */
+form {
+	margin:0.5em 2em 0.5em 2em;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
 
+.btn-md {
+	margin-top:0.25em
+}
+
+.form-control-lg {
+	vertical-align: middle;
+}
 .mta-bullet {
 	font-family: Helvetica, sans-serif;
-	font-size: 3.2vw;
+	font-size: 3em;
 	width:  1em;
 	height: 1em;
 	font-size: 1em;
@@ -14,12 +30,15 @@ html {
 	text-align: center;
 	font-weight: bold;
 	color: #FFF;
-	-webkit-border-radius: 999px;
-	-moz-border-radius: 999px;
-	border-radius: 999px;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
 	/* behavior: url(css/PIE.htc); // For IE. See http://css3pie.com/ */
 }
-span.mta-bullet { display: inline-block; }
+span.mta-bullet {
+	display: inline-block;
+	font-size: 2.6em;
+}
 .mta-a, .mta-c, .mta-e, .mta-ace { background-color: #2850AD; }
 .mta-b, .mta-d, .mta-f, .mta-m, .mta-bdfm { background-color: #FF6319; }
 .mta-g { background-color: #6CBE45; }
@@ -47,11 +66,38 @@ span.mta-bullet { display: inline-block; }
 .metro-north-pascack-valley  { background-color: #923D97; }
 .metro-north-port-jervis  { background-color: #FF7900; }
 .mta-ez-pass { background-color: #6E267B; }
+
 #mta-header {
   font-family: Helvetica, sans-serif;
   font-weight: bold;
 }
+
+.line {
+	display: inline-flex;
+	margin-bottom: 1em;
+}
+
 .mta {
 	font-family: Helvetica, sans-serif;
-		font-size: 3.1vw;
+		font-size: 2em;
+}
+
+#updt {
+	margin: 2em;
+	display: grid;
+}
+
+.minute_block{
+	display: inline-block;
+	width: 3em;
+	text-align: center;
+	margin-right: 1em;
+}
+
+.minutes_blocks{
+	/* display: inline-block; */
+	display: flex;
+	flex-direction: row;
+	line-height: 1;
+  margin: 0.5em 0 0.5em 1em;
 }
