@@ -4,7 +4,6 @@ import requests
 import time
 import json
 import pandas as pd
-import datetime
 from collections import OrderedDict, defaultdict
 import numpy as np
 from functools import reduce
