@@ -8,6 +8,10 @@ import datetime
 from collections import OrderedDict, defaultdict
 import numpy as np
 from functools import reduce
+from flask_socketio import SocketIO, emit
+from flask import render_template, request, Flask, escape, Response
+from time import sleep
+from threading import Thread, Event
 
 stop_ids = pd.read_csv('https://openmobilitydata-data.s3-us-west-1.amazonaws.com/public/feeds/mta/79/20181221/original/stops.txt')
 urls = ['http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce',
@@ -35,7 +39,7 @@ def get_feed(url):
 
 def get_time(stop, direction):
     #get feed
-    feeds = [get_feed(url) for url in urls]
+    feeds = [get_feed(url) for url in urls if get_feed(url) is not None]
     dict_obj = reduce(lambda a,b: a+b, feeds)
     collector = []
     #turn stop into stop id
@@ -70,6 +74,6 @@ def get_time(stop, direction):
                 if j[0] in stop_id and j[0].endswith(direction):
                     print_dict[str(row.routeId)].append(j[1])
     for key, value in print_dict.items():
-        print_dict[key] = [str(x) for x in sorted(value)]
+        print_dict[key] = [str(int(x)) for x in sorted(value)]
                     #print_list.append((str(row.routeId) + ' arriving in ' + str(j[1]) + ' minutes', str(row.tripId)))
     return print_dict

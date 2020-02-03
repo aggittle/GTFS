@@ -1,8 +1,5 @@
 from gtfs_helper import *
-from flask_socketio import SocketIO, emit
-from flask import render_template, request, Flask, escape, Response
-from time import sleep
-from threading import Thread, Event
+
 #stop_ids = pd.read_csv('https://openmobilitydata-data.s3-us-west-1.amazonaws.com/public/feeds/mta/79/20181221/original/stops.txt')
 stop_ids = pd.read_csv('stop_ids.csv')
 
