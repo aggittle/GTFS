@@ -38,6 +38,9 @@ def get_feed(url):
 
 def get_time(stop, direction):
     #get feed
+    for url in urls:
+        if get_feed(url) is None:
+            print('WARNING: ' + url + 'returned None')
     feeds = [get_feed(url) for url in urls if get_feed(url) is not None]
     dict_obj = reduce(lambda a,b: a+b, feeds)
     collector = []

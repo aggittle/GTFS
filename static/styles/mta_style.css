@@ -10,14 +10,18 @@ form {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+  font-size: 3.0vw;
+  align-items: self-end;
 }
 
 .btn-md {
-	margin-top:0.25em
+	margin-top:0.25em;
+  font-size: 2.5vw;
 }
 
 .form-control-lg {
 	vertical-align: middle;
+  font-size: 2.5vw;
 }
 .mta-bullet {
 	font-family: Helvetica, sans-serif;
@@ -100,4 +104,24 @@ span.mta-bullet {
 	flex-direction: row;
 	line-height: 1;
   margin: 0.5em 0 0.5em 1em;
+}
+
+@media only screen and (max-width: 600px) {
+.mta {
+	font-size: 1em;
+}
+span.mta-bullet {
+	display: inline-block;
+	font-size: 1.3em;
+  }
+.minute_block{
+  width: 1.5em;
+  margin-right: 0.5em;
+  }
+.minutes {
+  font-size: 0.5em
+}
+.minutes_blocks {
+    margin: 0em 0 0.5em 1em;
+}
 }
