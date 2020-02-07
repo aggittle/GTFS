@@ -1,3 +1,5 @@
+import eventlet
+eventlet.monkey_patch()
 from google.transit import gtfs_realtime_pb2
 from google.protobuf.json_format import MessageToDict, MessageToJson
 import requests

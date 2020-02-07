@@ -6,7 +6,7 @@ stop_ids = pd.read_csv('stop_ids.csv')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode=None)
+socketio = SocketIO(app, async_mode='eventlet', logger=True, engineio_logger=True)
 
 thread = Thread()
 thread_stop_event = Event()
@@ -19,7 +19,7 @@ def generate_update():
         global direction
         update=get_time(stop, direction)
         socketio.emit('trip_updates', {'update': update}, namespace='/test')
-        socketio.sleep(1)
+        socketio.sleep(0)
     else:
         print("No request received")
 
@@ -30,6 +30,14 @@ def getupdate():
                            stop_names = stop_names,
                          )
 
+@socketio.on('connect')
+def on_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def on_disconnect():
+    print('Disconnected')
+
 @socketio.on('form submit', namespace='/test')
 def form_submit(msg):
     print(msg['stop'], msg['direction'])
@@ -39,7 +47,7 @@ def form_submit(msg):
     direction = msg['direction']
     # need visibility of the global thread object
     global thread
-    print('Client connected')
+    
 
     #Start the random number generator thread only if the thread has not been started before.
     if not thread.is_alive():
