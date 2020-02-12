@@ -61,9 +61,9 @@ def get_time(stop, direction):
             row['id'] = block['id']
             row['tripId'] = block['tripUpdate']['trip'].get('tripId','')
             row['routeId'] = block['tripUpdate']['trip'].get('routeId','')
-            for i, stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
-                minutes = round((int(stop['arrival'].get('time','')) - int(time.time()))/60)
-                row[i] = (stop['stopId'], minutes)
+            for i, _stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
+                minutes = round((int(_stop['arrival'].get('time','')) - int(time.time()))/60)
+                row[i] = (_stop['stopId'], minutes)
 
             collector.append(row)
         except:
