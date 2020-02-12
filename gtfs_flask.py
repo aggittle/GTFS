@@ -6,22 +6,44 @@ stop_ids = pd.read_csv('stop_ids.csv')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode='eventlet', logger=True, engineio_logger=True)
 
-thread = Thread()
-thread_stop_event = Event()
-stop = ''
-direction = ''
+app.config.update(
+CELERY_BROKER_URL = 'redis://localhost:6379/0',
+CELERY_RESULT_BACKEND='redis://localhost:6379/0'
+)
 
-def generate_update():
-    while not thread_stop_event.isSet():
-        global stop
-        global direction
-        update=get_time(stop, direction)
-        socketio.emit('trip_updates', {'update': update}, namespace='/test')
-        socketio.sleep(0)
-    else:
-        print("No request received")
+socketio = SocketIO(app, async_mode='eventlet',logger=True,message_queue='redis://localhost:6379/0', engineio_logger=True)
+celery = make_celery(app)
+
+# thread = Thread()
+# thread_stop_event = Event()
+# stop = ''
+# direction = ''
+
+_update = {}
+
+# def global_funct(update):
+#     print('global funct triggered')
+#     socketio.emit('celery_message', {'update': _update}, namespace='/test')
+
+@celery.task(name="task.message") #(name="task.message")
+def generate_update(stop, direction):
+    global _update
+    local_socketio = SocketIO(message_queue='redis://',  async_mode='threading')
+    print('Celery task starting..')
+    # while not thread_stop_event.isSet():
+    while True:
+        # global stop
+        # global direction
+        new_update=get_time(stop, direction)
+        if new_update != _update and new_update != {}:
+            _update = new_update
+            print('**Emitting update: ', _update)
+            # global_funct(_update)
+            local_socketio.emit('trip_updates', {'update': _update}, namespace='/test')
+            local_socketio.sleep(0)
+        else:
+            print("No new update")
 
 @app.route('/')
 def getupdate():
@@ -29,6 +51,16 @@ def getupdate():
     return render_template('update.html',
                            stop_names = stop_names,
                          )
+
+@socketio.on('client_connect', namespace='/test')
+def print_connect_message(msg):
+    print(msg['data'])
+
+@socketio.on('celery_message', namespace='/test')
+def send_to_client(msg):
+    print('CELERY MESSAGE RECEIVED')
+    update = msg['update']
+    socketio.emit('trip_updates', {'update': update}, namespace='/test')
 
 @socketio.on('connect')
 def on_connect():
@@ -41,18 +73,19 @@ def on_disconnect():
 @socketio.on('form submit', namespace='/test')
 def form_submit(msg):
     print(msg['stop'], msg['direction'])
-    global stop
-    global direction
+    # global stop
+    # global direction
     stop = msg['stop']
     direction = msg['direction']
     # need visibility of the global thread object
-    global thread
-    
+    # global thread
+    generate_update.delay(stop, direction)
+
 
     #Start the random number generator thread only if the thread has not been started before.
-    if not thread.is_alive():
-        print("Starting Thread")
-        thread = socketio.start_background_task(generate_update)
+    # if not thread.is_alive():
+    #     print("Starting Thread")
+    #     thread = socketio.start_background_task(generate_update)
 
 # @app.route('/raw_update', methods=["POST"])
 # def getRaw():
@@ -68,5 +101,5 @@ def form_submit(msg):
 #                            stop = stop,
 #                            direction = direction)
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, debug=True)
     # app.run(debug=True)

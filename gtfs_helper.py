@@ -5,6 +5,8 @@ from google.protobuf.json_format import MessageToDict, MessageToJson
 import requests
 import time
 import json
+from celery import Celery
+from flask_celery import make_celery
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import numpy as np

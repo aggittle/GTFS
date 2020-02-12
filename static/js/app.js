@@ -2,6 +2,9 @@ $(document).ready(function(){
     //connect to the socket server.
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/test', {transports:['websocket']});
 
+    socket.on('connect', function() {
+                socket.emit('client_connect', {'data': 'I\'m connected!'});
+            });
     $('form').submit(function(){
     socket.emit('form submit', {'stop':$('#stops').val(), 'direction':$('#direction').val()});
     return false;
