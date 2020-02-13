@@ -14,7 +14,8 @@ CELERY_RESULT_BACKEND='redis://localhost:6379/0'
 
 socketio = SocketIO(app, async_mode='eventlet',logger=True,message_queue='redis://localhost:6379/0', engineio_logger=True)
 celery = make_celery(app)
-
+init = 0
+result = None
 # thread = Thread()
 # thread_stop_event = Event()
 # stop = ''
@@ -26,15 +27,18 @@ _update = {}
 #     print('global funct triggered')
 #     socketio.emit('celery_message', {'update': _update}, namespace='/test')
 
-@celery.task(name="task.message") #(name="task.message")
-def generate_update(stop, direction):
+@celery.task(name="task.message", bind=True, base=AbortableTask) #(name="task.message")
+def generate_update(self, stop, direction):
     global _update
     local_socketio = SocketIO(message_queue='redis://',  async_mode='threading')
     print('Celery task starting..')
     # while not thread_stop_event.isSet():
     while True:
+
         # global stop
         # global direction
+        if self.is_aborted():
+            return
         new_update=get_time(stop, direction)
         if new_update != _update and new_update != {}:
             _update = new_update
@@ -73,13 +77,22 @@ def on_disconnect():
 @socketio.on('form submit', namespace='/test')
 def form_submit(msg):
     print(msg['stop'], msg['direction'])
+    print('INIT: ' + str(init))
+    global init
+    global result
     # global stop
     # global direction
     stop = msg['stop']
     direction = msg['direction']
     # need visibility of the global thread object
     # global thread
-    generate_update.delay(stop, direction)
+    if init == 0:
+        init += 1
+        result = generate_update.delay(stop, direction)
+    else:
+        result.abort()
+        result = generate_update.delay(stop, direction)
+
 
 
     #Start the random number generator thread only if the thread has not been started before.

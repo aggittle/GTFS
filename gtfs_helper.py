@@ -7,6 +7,7 @@ import time
 import json
 from celery import Celery
 from flask_celery import make_celery
+from celery.contrib.abortable import AbortableTask
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import numpy as np
