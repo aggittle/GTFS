@@ -16,10 +16,10 @@ socketio = SocketIO(app, async_mode='eventlet',logger=True,message_queue='redis:
 celery = make_celery(app)
 init = 0
 result = None
-# thread = Thread()
-# thread_stop_event = Event()
-# stop = ''
-# direction = ''
+thread = Thread()
+thread_stop_event = Event()
+stop = ''
+direction = ''
 
 _update = {}
 
@@ -27,16 +27,13 @@ _update = {}
 #     print('global funct triggered')
 #     socketio.emit('celery_message', {'update': _update}, namespace='/test')
 
-@celery.task(name="task.message", bind=True, base=AbortableTask) #(name="task.message")
+@celery.task(name="task.message", bind=True, base=AbortableTask)
 def generate_update(self, stop, direction):
     global _update
     local_socketio = SocketIO(message_queue='redis://',  async_mode='threading')
+    print('local_socketio: ',local_socketio)
     print('Celery task starting..')
-    # while not thread_stop_event.isSet():
     while True:
-
-        # global stop
-        # global direction
         if self.is_aborted():
             return
         new_update=get_time(stop, direction)
@@ -76,12 +73,13 @@ def on_disconnect():
 
 @socketio.on('form submit', namespace='/test')
 def form_submit(msg):
-    print(msg['stop'], msg['direction'])
-    print('INIT: ' + str(init))
     global init
     global result
-    # global stop
-    # global direction
+    global stop
+    global direction
+    print(msg['stop'], msg['direction'])
+    print('INIT: ' + str(init))
+
     stop = msg['stop']
     direction = msg['direction']
     # need visibility of the global thread object
@@ -89,9 +87,11 @@ def form_submit(msg):
     if init == 0:
         init += 1
         result = generate_update.delay(stop, direction)
+        # result.wait()
     else:
         result.abort()
         result = generate_update.delay(stop, direction)
+        # result.wait()
 
 
 
@@ -100,19 +100,19 @@ def form_submit(msg):
     #     print("Starting Thread")
     #     thread = socketio.start_background_task(generate_update)
 
-# @app.route('/raw_update', methods=["POST"])
-# def getRaw():
-#     stop_names =  set(stop_ids['stop_name'].to_list())
-#     # stop = 'None'
-#     # direction = 'None'
-#     if request.method == 'POST':
-#         stop = request.form.get('stops')
-#         direction = request.form.get('direction')
-#     return render_template('update.html',
-#                            update=get_time(stop, direction),
-#                            stop_names = stop_names,
-#                            stop = stop,
-#                            direction = direction)
+@app.route('/raw_update', methods=["POST"])
+def getRaw():
+    stop_names =  set(stop_ids['stop_name'].to_list())
+    # stop = 'None'
+    # direction = 'None'
+    if request.method == 'POST':
+        stop = request.form.get('stops')
+        direction = request.form.get('direction')
+    return render_template('update.html',
+                           update=get_time(stop, direction),
+                           stop_names = stop_names,
+                           stop = stop,
+                           direction = direction)
 if __name__ == "__main__":
     socketio.run(app, debug=True)
-    # app.run(debug=True)
+    app.run(debug=True)
