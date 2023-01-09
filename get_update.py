@@ -43,6 +43,7 @@ def get_update():
             #row['label'] = block['vehicle']['vehicle'].get('label','')
             collector.append(row)
         except:
+            print('no update')
             pass
 
     df = pd.DataFrame(collector)

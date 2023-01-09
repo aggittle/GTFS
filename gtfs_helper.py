@@ -1,8 +1,13 @@
+import eventlet
+eventlet.monkey_patch()
 from google.transit import gtfs_realtime_pb2
 from google.protobuf.json_format import MessageToDict, MessageToJson
 import requests
 import time
 import json
+from celery import Celery
+from flask_celery import make_celery
+from celery.contrib.abortable import AbortableTask
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import numpy as np
@@ -13,34 +18,37 @@ from time import sleep
 from threading import Thread, Event
 
 stop_ids = pd.read_csv('https://openmobilitydata-data.s3-us-west-1.amazonaws.com/public/feeds/mta/79/20181221/original/stops.txt')
-urls = ['http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=16',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=26',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=21',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=2',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=31',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=36',
-'http://datamine.mta.info/mta_esi.php?key=636e323a9180834b0811457aa7db81ce&feed_id=51'
+urls = ['https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs',
+'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si'
 ]
 
 def get_feed(url):
     try:
         feed = gtfs_realtime_pb2.FeedMessage()
-        response = requests.get(url)
+        response = requests.get(url, headers={"x-api-key":"m8cxK31C2e1rGSde1LvaN6zfCvwEHeGua9E9ivfP"})
         feed.ParseFromString(response.content)
         dict_obj = MessageToDict(feed)
         if dict_obj != {}:
+            print(dict_obj)
             return dict_obj['entity']
         else:
+            print('EMPTY FEED')
             return []
     except:
-        pass
+        print('PROBLEM GETTING FEED')
 
 def get_time(stop, direction):
+    print('GETTING TIME')
     #get feed
     for url in urls:
         if get_feed(url) is None:
-            print('WARNING: ' + url + 'returned None')
+            print('WARNING: ' + url + ' returned None')
     feeds = [get_feed(url) for url in urls if get_feed(url) is not None]
     dict_obj = reduce(lambda a,b: a+b, feeds)
     collector = []
@@ -57,9 +65,9 @@ def get_time(stop, direction):
             row['id'] = block['id']
             row['tripId'] = block['tripUpdate']['trip'].get('tripId','')
             row['routeId'] = block['tripUpdate']['trip'].get('routeId','')
-            for i, stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
-                minutes = round((int(stop['arrival'].get('time','')) - int(time.time()))/60)
-                row[i] = (stop['stopId'], minutes)
+            for i, _stop in enumerate(block['tripUpdate']['stopTimeUpdate']):
+                minutes = round((int(_stop['arrival'].get('time','')) - int(time.time()))/60)
+                row[i] = (_stop['stopId'], minutes)
 
             collector.append(row)
         except:

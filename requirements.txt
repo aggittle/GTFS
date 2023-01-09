@@ -1,10 +1,14 @@
 certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
+dnspython==1.16.0
+eventlet==0.25.1
 Flask==1.1.1
 Flask-SocketIO==4.2.1
+greenlet==0.4.15
 gtfs-realtime-bindings==0.0.6
 idna==2.8
+importlib-metadata==1.5.0
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
@@ -19,3 +23,4 @@ requests==2.22.0
 six==1.14.0
 urllib3==1.26.5
 Werkzeug==0.16.1
+zipp==2.1.0

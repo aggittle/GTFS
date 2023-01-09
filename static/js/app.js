@@ -1,7 +1,10 @@
 $(document).ready(function(){
     //connect to the socket server.
-    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test', {transports:['websocket']});
 
+    socket.on('connect', function() {
+                socket.emit('client_connect', {'data': 'I\'m connected!'});
+            });
     $('form').submit(function(){
     socket.emit('form submit', {'stop':$('#stops').val(), 'direction':$('#direction').val()});
     return false;
@@ -10,6 +13,7 @@ $(document).ready(function(){
     socket.on('trip_updates', function(msg) {
         var updt = ''
         _update = msg.update;
+        console.log('Update received')
         for (line in _update) {
           if (["A", "C", "E"].includes(line)){
             updt += '<div class="line"><span class="mta-ace mta-bullet">' + line + '</span>'
